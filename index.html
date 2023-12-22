@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Country Dropdown</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #f8f9fa; /* Light gray background */
+        padding: 20px;
+        color: #000000; /* Dark text color */
+      }
+
+      h1 {
+        color: #007bff; /* Blue heading color */
+      }
+
+      label {
+        margin-top: 10px;
+        display: block;
+        font-weight: bold;
+      }
+
+      .select-container {
+        margin-bottom: 20px;
+      }
+
+      select,
+      span {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ced4da; /* Light gray border */
+        border-radius: 5px;
+        margin-top: 5px;
+        box-sizing: border-box;
+        background-color: #fff; /* White background */
+      }
+
+      select {
+        cursor: pointer;
+      }
+
+      /* Styling for a custom select arrow */
+      select::-ms-expand {
+        display: none;
+      }
+
+      select {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="%23343a40"><path d="M8 11L3 6h10z"/></svg>');
+        background-repeat: no-repeat;
+        background-position: right 10px top 50%;
+      }
+
+      /* Style adjustments for the mobile code span */
+      #mobileCode {
+        display: inline-block;
+        background-color: #ffc107; /* Yellow background */
+        padding: 10px;
+        border: 1px solid #ffc107; /* Yellow border */
+        border-radius: 5px;
+        margin-top: 5px;
+        color: #343a40; /* Dark text color */
+      }
+
+      /* Additional styles for extra information */
+      #CountryCapital,
+      #countryLanguage,
+      #countryCurrency {
+        display: inline-block;
+        background-color: #28a745; /* Green background */
+        padding: 10px;
+        border: 1px solid #28a745; /* Green border */
+        border-radius: 5px;
+        margin-top: 5px;
+        color: #fff; /* White text color */
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        select,
+        span {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8">
+            <form action="" method="post">
+
+          <h1>Country Dropdown Lists</h1>
+          <label for="countryDropdown">Select a Country:</label>
+          <select id="countryDropdown" class="form-control"></select>
+          <label for="countryCodeDropDown">Country Code:</label>
+          <select id="countryCodeDropDown" class="form-control"></select>
+          <label for="mobileCode">Mobile Code:</label>
+          <span id="mobileCode" class="form-control"></span>
+          <label for="CountryCapital">Country Capital</label>
+          <span id="CountryCapital" class="form-control"></span>
+          <label for="countryLanguage">Language</label>
+          <span id="countryLanguage" class="form-control"></span>
+          <label for="countryCurrency">Currency</label>
+          <span id="countryCurrency" class="form-control"></span>
+          <label for="countryRegion">Region</label>
+          <span id="countryRegion" class="form-control"></span>
+          <br>
+          <br>
+          <button class="btn btn-danger" onclick="resetForm()" type="reset">Clear</button>
+        </form>
+
+        </div>
+      </div>
+    </div>
+
+    <script>
+
+        function resetForm(){
+            var countryCurrency = document.getElementById('countryCurrency')
+            countryCurrency.clear()
+        }
+      fetch("http://localhost:3000/countries")
+        .then((response) => {
+          console.log("Response status:", response.status);
+          return response.json();
+        })
+        .then((data) => {
+          console.log("Fetched data:", data);
+
+          if (Array.isArray(data.data)) {
+            const dropdown = document.getElementById("countryDropdown");
+            const countryCode = document.getElementById("countryCodeDropDown");
+            const mobileCode = document.getElementById("mobileCode");
+            const CountryCapital = document.getElementById("CountryCapital");
+            const countryLanguage = document.getElementById("countryLanguage");
+            const countryCurrency = document.getElementById("countryCurrency");
+            const countryRegion = document.getElementById("countryRegion")
+
+            data.data.forEach((country) => {
+              const option = document.createElement("option");
+              option.value = country.name;
+              option.textContent = country.name;
+              dropdown.appendChild(option);
+
+              const codeOption = document.createElement("option");
+              codeOption.value = country.code;
+              codeOption.textContent = country.code;
+              countryCode.appendChild(codeOption);
+            });
+
+            // Add event listener to countryDropdown
+            dropdown.addEventListener("change", function () {
+              const selectedCountryIndex = dropdown.selectedIndex;
+              countryCode.selectedIndex = selectedCountryIndex;
+              mobileCode.textContent =
+                data.data[selectedCountryIndex].dialling_code;
+            });
+
+            dropdown.addEventListener("change", function () {
+              const selectedCountryIndex = dropdown.selectedIndex;
+              countryCode.selectedIndex = selectedCountryIndex;
+              CountryCapital.textContent =
+                data.data[selectedCountryIndex].capital;
+            });
+
+            dropdown.addEventListener("change", function () {
+              const selectedCountryIndex = dropdown.selectedIndex;
+              countryCode.selectedIndex = selectedCountryIndex;
+              countryLanguage.textContent =
+                data.data[selectedCountryIndex].language.name;
+            });
+
+            dropdown.addEventListener("change", function () {
+              const selectedCountryIndex = dropdown.selectedIndex;
+              countryCode.selectedIndex = selectedCountryIndex;
+              countryRegion.textContent =
+                data.data[selectedCountryIndex].region
+            });
+
+            dropdown.addEventListener("change", function () {
+              const selectedCountryIndex = dropdown.selectedIndex;
+              countryCode.selectedIndex = selectedCountryIndex;
+              countryCurrency.textContent =
+                data.data[selectedCountryIndex].currency.name +
+                " " +
+                data.data[selectedCountryIndex].currency.code +
+                " " +
+                data.data[selectedCountryIndex].currency.symbol;
+            });
+
+            // Add event listener to countryCodeDropDown
+            countryCode.addEventListener("change", function () {
+              const selectedCountryIndex = countryCode.selectedIndex;
+              dropdown.selectedIndex = selectedCountryIndex;
+              mobileCode.textContent =
+                data.data[selectedCountryIndex].dialling_code;
+            });
+          } else {
+            console.error("Invalid data format. Expected an array.");
+          }
+        })
+        .catch((error) => console.error("Error fetching countries:", error));
+    </script>
+  </body>
+</html>
